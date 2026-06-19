@@ -1,11 +1,22 @@
 // import React from 'react'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import TaskDutyLogo from "../assets/Task Duty Logo.svg"
 import profilePicture from "../assets/Profile picture.svg";
+import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
 
 
 const Navbar = () => {
+    const {user, logout} = useAuth()
+    const navigate = useNavigate()
+     const [hoveredLink, setHoveredLink] = useState<string | null>(null)
+
+    const handleLogout = async () =>{
+        await logout()
+        navigate("/login")
+    }
   return (
+
    <nav style ={{
       borderBottom: '0.5px solid #B8B6B6',
       position: 'sticky',
@@ -58,38 +69,113 @@ const Navbar = () => {
         gap: "40px",
         alignItems: "center"
     }}>
-        <Link to="/tasks/new" style={{
+         
+       {user ? (
+        <>
+        <Link to="/tasks/new"
+        onMouseEnter={() => setHoveredLink("new")}
+        onMouseLeave={() => setHoveredLink(null)}
+         style={{
             fontSize: "22px",
             fontWeight: "500",
-            color: "#292929",
+            color: hoveredLink === "new" ? "#974FD0" : "#292929",
             textDecoration: "none"
-        }}>
-            New Task
-        </Link>
+          }}>
+             New Task
+          </Link>
 
-        <Link to="/tasks" style={{
+          <Link to="/tasks" 
+          onMouseEnter={() => setHoveredLink("tasks")}
+          onMouseLeave={() => setHoveredLink(null)}
+          style={{
             fontSize: "22px",
             fontWeight: "500",
-            color: "#292929",
+            color: hoveredLink === "tasks" ? "#974FD0" : "#292929",
             textDecoration: "none"
         }}>
             All Tasks
         </Link>
-      
-       <img src={profilePicture} alt="Profile picture" style={{
-            width: "38px",
+
+        {/* User Name section */}
+
+        <span style={{
+            fontSize: "16px",
+            fontWeight: "500",
+            color: "#2D0050",
+        }}>
+           {user.name}
+        </span>
+
+        {/* Profile picture */}
+
+        <img src={profilePicture} alt="Profile Picture" onClick={() => navigate("/profile")}
+        style={{
+          width: "38px",
             height: "38px",
             borderRadius: "50%",
             objectFit: "cover",
             cursor: "pointer",
             border: "0.5px solid #292929"
-        }} />
+        }}
+        />
 
+        {/* Logout button */}
+
+        <button 
+        onClick={handleLogout}
+        onMouseEnter={() => setHoveredLink("logout")}
+        onMouseLeave={() => setHoveredLink(null)}
+        style={{
+            padding: "8px 20px",
+            backgroundColor: hoveredLink === "logout" ? "#974FD0" : "#ffffff",
+             color: hoveredLink === "logout" ? "#ffffff" : "black",
+            border: "1px solid #974FD0",
+            borderRadius: "6px",
+            fontSize: "16px",
+            fontWeight: "500",
+            cursor: "pointer"
+        }}>
+            Logout
+             </button>
+        </>
+
+    ) : (
+        <>
+        <Link to="/login" 
+        onMouseEnter={() => setHoveredLink("login")}
+        onMouseLeave={() => setHoveredLink(null)}
+        style={{
+             padding: "8px 20px",
+            backgroundColor: hoveredLink === "login" ? "#974FD0" : "#ffffff",
+             color: hoveredLink === "login" ? "#ffffff" : "black",
+             borderRadius: "6px",
+             fontSize: "18px",
+             fontWeight: "500",
+             textDecoration: "none"
+        }}>
+            Login
+        </Link>
+
+        <Link to="/register" 
+        onMouseEnter={() => setHoveredLink("register")}
+        onMouseLeave={() => setHoveredLink(null)}
+        style={{
+            padding: "8px 20px",
+             backgroundColor: hoveredLink === "register" ? "#974FD0" : "#ffffff",
+             color: hoveredLink === "register" ? "#ffffff" : "black",
+             borderRadius: "6px",
+             fontSize: "18px",
+             fontWeight: "500",
+             textDecoration: "none"
+        }}>
+           Register
+        </Link>
+        </>
+       )}  
+        
     </div>
 
     </div>
-       
-    
 
    </nav>
   )
